@@ -43,7 +43,6 @@ if show_clean_message:
             "hey esraa i just wanted to say how much i love u and how much you made my life better , "
             "i really love u and thanks for making my life better"
         )
-        st.image("esraa.jpg", use_container_width=True)
 
     st.write("")
     if st.button("⬅️ Back"):
@@ -185,28 +184,32 @@ else:
         st.header("🇪🇬 Floor 5: Sisi AI")
         st.write("Chat with Sisi AI powered by Gemini!")
 
-       api_key = st.secrets.get("GEMINI_API_KEY", "")
-        client = genai.Client(api_key=api_key)
+        api_key = st.secrets.get("GEMINI_API_KEY", "")
 
-        for message in st.session_state.sisi_messages:
-            with st.chat_message(message["role"]):
-                st.markdown(message["content"])
+        if not api_key:
+            st.error("API Key not found! Please check your secrets configuration.")
+        else:
+            client = genai.Client(api_key=api_key)
 
-        if prompt := st.chat_input("Ask me anything..."):
-            with st.chat_message("user"):
-                st.markdown(prompt)
-            st.session_state.sisi_messages.append({"role": "user", "content": prompt})
+            for message in st.session_state.sisi_messages:
+                with st.chat_message(message["role"]):
+                    st.markdown(message["content"])
 
-            with st.chat_message("assistant"):
-                with st.spinner("Thinking..."):
-                    try:
-                        response = client.interactions.create(
-                            model="gemini-3.6-flash",
-                            input=prompt
-                        )
-                        bot_reply = response.output_text
-                    except Exception as e:
-                        bot_reply = f"Error generating response: {e}"
+            if prompt := st.chat_input("Ask me anything..."):
+                with st.chat_message("user"):
+                    st.markdown(prompt)
+                st.session_state.sisi_messages.append({"role": "user", "content": prompt})
 
-                st.markdown(bot_reply)
-            st.session_state.sisi_messages.append({"role": "assistant", "content": bot_reply})
+                with st.chat_message("assistant"):
+                    with st.spinner("Thinking..."):
+                        try:
+                            response = client.interactions.create(
+                                model="gemini-3.6-flash",
+                                input=prompt
+                            )
+                            bot_reply = response.output_text
+                        except Exception as e:
+                            bot_reply = f"Error generating response: {e}"
+
+                    st.markdown(bot_reply)
+                st.session_state.sisi_messages.append({"role": "assistant", "content": bot_reply})
