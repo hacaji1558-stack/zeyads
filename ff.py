@@ -117,7 +117,7 @@ if st.session_state.floor == 1:
             "metrics": {
                 "Grade": "8th",
                 "Role": "Role / Specialization",
-                "Status": ""
+                "Status": "student"
             }
         }
     }
