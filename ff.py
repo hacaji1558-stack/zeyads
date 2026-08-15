@@ -4,9 +4,8 @@ import os
 import plotly.graph_objects as px_go
 from google import genai
 
-st.set_page_config(page_title="Ahmed's Elevator Portfolio", layout="wide")
+st.set_page_config(page_title="med7at saleh", layout="wide")
 
-# Initialize Session State Variables
 if "floor" not in st.session_state:
     st.session_state.floor = 1
 
@@ -43,8 +42,13 @@ if "show_flashcard_answer" not in st.session_state:
 if "last_card_idx" not in st.session_state:
     st.session_state.last_card_idx = 0
 
+if "show_dropdown" not in st.session_state:
+    st.session_state.show_dropdown = False
 
-# Sidebar Controls
+if "selected_person" not in st.session_state:
+    st.session_state.selected_person = "Zeyad"
+
+
 target = st.sidebar.number_input("Destination Floor", 1, 8, st.session_state.floor)
 direction = st.sidebar.radio("Direction", ["Up", "Down"])
 passengers = st.sidebar.slider("Passengers", 0, 10, 1)
@@ -59,7 +63,6 @@ floor_ph.metric("CURRENT FLOOR", st.session_state.floor)
 status_ph.metric("STATUS", "IDLE")
 bar_ph.progress(0)
 
-# Elevator Animation Logic
 if elevator_btn:
     delay = 0.2 + passengers * 0.15
     step = 1 if target > st.session_state.floor else -1
@@ -80,22 +83,78 @@ if elevator_btn:
 
 st.write("---")
 
-# Floor Routing
 if st.session_state.floor == 1:
-    st.title("Welcome to My Portfolio! 👋")
-    st.write(
-        "Hi, I'm Ahmed! I'm a high school student passionate about programming and web development. "
-        "I started learning Python to build cool projects, and Streamlit allowed me to transform my scripts "
-        "into interactive web apps. Check out my projects and learning journey using the elevator in the sidebar!"
-    )
+    st.title("Welcome to the Portfolio Directory! 👋")
+
+
+    PROFILES = {
+        "Zeyad": {
+            "title": "Profile: Zeyad 👨‍💻",
+            "bio": (
+                "Welcome to Zeyad's profile! Zeyad is currently an 11th grade high school student "
+                "exploring computer science, web development, and interactive coding."
+            ),
+            "metrics": {
+                "Grade": "11th Grade",
+                "Role": "Student / Instructor",
+                "Status": "Active Learning"
+            }
+        },
+        "adam": { 
+            "title": "Profile: adam 👤",
+            "bio": "Welcome to adam profile! adam is currently an 8th grade high school student "
+                "exploring computer science, web development, and interactive coding",
+            "metrics": {
+                "Grade": "8th",
+                "Role": "Role / Specialization",
+                "Status": "student"
+            }
+        },
+        "basem": {  
+            "title": "basem",
+            "bio": "Welcome to basem profile! basem is currently an 8th grade high school student "
+                "exploring computer science, web development, and interactive coding",
+            "metrics": {
+                "Grade": "8th",
+                "Role": "Role / Specialization",
+                "Status": ""
+            }
+        }
+    }
+
+    profile_names = list(PROFILES.keys())
+
+
+    if st.session_state.get("selected_person") not in profile_names:
+        st.session_state.selected_person = profile_names[0]
+
+    if st.button("Select Person Info"):
+        st.session_state.show_dropdown = not st.session_state.show_dropdown
+
+    if st.session_state.show_dropdown:
+        st.session_state.selected_person = st.selectbox(
+            "Choose a person to display profile:",
+            profile_names,
+            index=profile_names.index(st.session_state.selected_person)
+        )
+
+    st.write("---")
+
+    active_person = st.session_state.selected_person
+    p_data = PROFILES[active_person]
+
+    st.subheader(p_data["title"])
+    st.write(p_data["bio"])
 
     col1, col2, col3 = st.columns(3)
+    metrics_items = list(p_data["metrics"].items())
+
     with col1:
-        st.metric(label="Grade", value="11th Grade")
+        st.metric(label=metrics_items[0][0], value=metrics_items[0][1])
     with col2:
-        st.metric(label="Language", value="Python 📂 🐍")
+        st.metric(label=metrics_items[1][0], value=metrics_items[1][1])
     with col3:
-        st.metric(label="Status", value="Building Projects")
+        st.metric(label=metrics_items[2][0], value=metrics_items[2][1])
 
     st.success("Select Destination Floor 2 to 8 in the sidebar elevator to explore!")
 
@@ -319,7 +378,6 @@ elif st.session_state.floor == 6:
     with st.expander("📊 View Expense Visualization Breakdown", expanded=True):
         chart_col1, chart_col2 = st.columns(2)
 
-        # Static configuration disables all chart interactivity
         static_config = {"staticPlot": True}
 
         with chart_col1:
