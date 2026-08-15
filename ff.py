@@ -111,7 +111,7 @@ if st.session_state.floor == 1:
             }
         },
         "basem": {  
-            "title": "basem",
+            "title": "Profile: bassem 👤",
             "bio": "Welcome to basem profile! basem is currently an 8th grade high school student "
                 "exploring computer science, web development, and interactive coding",
             "metrics": {
